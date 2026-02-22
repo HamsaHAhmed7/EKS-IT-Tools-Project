@@ -5,15 +5,15 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/rewrite-target: /
-    external-dns.alpha.kubernetes.io/hostname: tools.eks.hamsa-ahmed.co.uk
+    external-dns.alpha.kubernetes.io/hostname: it-tools.eks.hamsa-ahmed.co.uk
 spec:
   ingressClassName: external-nginx
   tls:
   - hosts:
-    - tools.eks.hamsa-ahmed.co.uk
+    - it-tools.eks.hamsa-ahmed.co.uk
     secretName: eks-it-tools-tls
   rules:
-  - host: tools.eks.hamsa-ahmed.co.uk
+  - host: it-tools.eks.hamsa-ahmed.co.uk
     http:
       paths:
       - path: /
