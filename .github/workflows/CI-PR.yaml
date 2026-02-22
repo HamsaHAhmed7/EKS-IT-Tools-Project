@@ -1,3 +1,4 @@
+# .github/workflows/CI-PR.yaml
 name: CI
 
 on:
@@ -13,23 +14,33 @@ permissions:
 
 jobs:
   docker-check:
-    if: contains(github.event.pull_request.changed_files, 'app/')
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
+      - name: check for app changes
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            app:
+              - 'app/**'
+
       - name: aws auth
+        if: steps.filter.outputs.app == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: eu-west-2
 
       - name: build image
+        if: steps.filter.outputs.app == 'true'
         working-directory: app
         run: docker build -t test:${{ github.sha }} .
 
       - name: trivy scan
+        if: steps.filter.outputs.app == 'true'
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: test:${{ github.sha }}
@@ -37,7 +48,6 @@ jobs:
           exit-code: 1
 
   terraform-check:
-    if: contains(github.event.pull_request.changed_files, 'infra/')
     runs-on: ubuntu-latest
 
     defaults:
@@ -47,22 +57,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: check for infra changes
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            infra:
+              - 'infra/**'
+
       - name: aws auth
+        if: steps.filter.outputs.infra == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - uses: hashicorp/setup-terraform@v3
+      - name: setup terraform
+        if: steps.filter.outputs.infra == 'true'
+        uses: hashicorp/setup-terraform@v3
 
-      - run: terraform fmt -check
-      - run: terraform init
-      - run: terraform validate
+      - name: terraform fmt
+        if: steps.filter.outputs.infra == 'true'
+        run: terraform fmt -check
+
+      - name: terraform init
+        if: steps.filter.outputs.infra == 'true'
+        run: terraform init
+
+      - name: terraform validate
+        if: steps.filter.outputs.infra == 'true'
+        run: terraform validate
 
       - name: checkov
+        if: steps.filter.outputs.infra == 'true'
         uses: bridgecrewio/checkov-action@master
         with:
           directory: infra/
           soft_fail: false
 
-      - run: terraform plan -var-file=terraform.tfvars
+      - name: terraform plan
+        if: steps.filter.outputs.infra == 'true'
+        run: terraform plan -var-file=terraform.tfvars
