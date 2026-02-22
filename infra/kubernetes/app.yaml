@@ -18,7 +18,7 @@ spec:
         - name: eks-it-tools
           image: 016873651140.dkr.ecr.eu-west-2.amazonaws.com/eks-it-tools:latest
           ports:
-            - containerPort: 808080
+            - containerPort: 8080
               name: http
           resources:
             requests:
