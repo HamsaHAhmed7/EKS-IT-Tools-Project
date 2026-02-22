@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket         = "eks-2048-game"
+    bucket         = "eks-it-tools-state"
     key            = "infra"
     region         = "eu-west-2"
     dynamodb_table = "eks-locks"

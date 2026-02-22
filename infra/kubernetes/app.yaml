@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: eks-game
+  name: eks-it-tools
   labels:
-    app: 2024-eks-game
+    app: eks-it-tools
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: 2024-eks-game
+      app: eks-it-tools
   template:
     metadata:
       labels:
-        app: 2024-eks-game
+        app: eks-it-tools
     spec:
       containers:
         - name: eks-it-tools

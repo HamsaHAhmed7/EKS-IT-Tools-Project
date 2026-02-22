@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: eks-game-service
+  name: eks-it-tools-service
 spec:
   type: ClusterIP
   ports:
@@ -9,4 +9,4 @@ spec:
     name: http
     targetPort: http
   selector:
-    app: 2024-eks-game
+    app: eks-it-tools

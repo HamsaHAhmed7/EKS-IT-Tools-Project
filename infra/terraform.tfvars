@@ -1,4 +1,4 @@
-project        = "eks-game"
+project        = "eks-it-tools"
 aws_region     = "eu-west-2"
 domain         = "hamsa-ahmed.co.uk"
 parent_zone_id = "Z07385433QNXDZZ6RBE0E"

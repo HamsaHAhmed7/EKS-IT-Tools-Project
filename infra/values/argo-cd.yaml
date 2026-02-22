@@ -1,5 +1,5 @@
 global:
-  domain: argocd.game.eks.hamsa-ahmed.co.uk
+  domain: argocd.tools.eks.hamsa-ahmed.co.uk
 
 server:
   ingress:
