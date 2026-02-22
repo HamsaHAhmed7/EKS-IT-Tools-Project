@@ -30,7 +30,7 @@ declare module 'unicode-emoji-json' {
     skin_tone_support: boolean;
     skin_tone_support_unicode_version: string;
   }>;
-  
+
   export default emoji;
 }
 

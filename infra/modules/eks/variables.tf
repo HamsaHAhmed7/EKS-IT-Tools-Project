@@ -15,4 +15,3 @@ variable "common_tags" {
 variable "eks_version" {
   type = string
 }
-

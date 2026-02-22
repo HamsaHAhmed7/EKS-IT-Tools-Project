@@ -18,10 +18,10 @@ jobs:
   docker-deploy:
     if: contains(github.event.head_commit.modified, 'app/')
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: aws auth
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -51,7 +51,7 @@ jobs:
   terraform-deploy:
     if: contains(github.event.head_commit.modified, 'infra/')
     runs-on: ubuntu-latest
-    
+
     defaults:
       run:
         working-directory: infra

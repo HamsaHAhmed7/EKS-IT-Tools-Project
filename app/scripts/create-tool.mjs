@@ -92,7 +92,7 @@ test.describe('Tool - ${toolNameTitleCase}', () => {
 
   });
 });
-  
+
 `,
 );
 

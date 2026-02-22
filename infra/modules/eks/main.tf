@@ -179,5 +179,3 @@ resource "aws_eks_pod_identity_association" "external_dns" {
   service_account = "external-dns"
   role_arn        = aws_iam_role.external_dns_role.arn
 }
-
-

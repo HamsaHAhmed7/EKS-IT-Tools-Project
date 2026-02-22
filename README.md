@@ -26,17 +26,17 @@ Complete cloud-native deployment demonstrating:
 
 ## Tech Stack
 
-**Infrastructure:** AWS EKS, VPC, Route53, ECR  
-**IaC:** Terraform with modular design  
-**Container:** Docker, NGINX  
-**Orchestration:** Kubernetes 1.31  
-**GitOps:** ArgoCD  
-**Ingress:** NGINX Ingress + AWS Load Balancer Controller  
-**SSL:** cert-manager + Let's Encrypt  
-**DNS:** ExternalDNS  
-**Monitoring:** Prometheus + Grafana  
-**Security:** Trivy, Checkov  
-**CI/CD:** GitHub Actions  
+**Infrastructure:** AWS EKS, VPC, Route53, ECR
+**IaC:** Terraform with modular design
+**Container:** Docker, NGINX
+**Orchestration:** Kubernetes 1.31
+**GitOps:** ArgoCD
+**Ingress:** NGINX Ingress + AWS Load Balancer Controller
+**SSL:** cert-manager + Let's Encrypt
+**DNS:** ExternalDNS
+**Monitoring:** Prometheus + Grafana
+**Security:** Trivy, Checkov
+**CI/CD:** GitHub Actions
 
 ---
 
@@ -82,7 +82,7 @@ kubectl apply -f kubernetes/
 
 **GitOps Flow:**
 ```
-Code Push → CI builds image → Updates K8s manifest → 
+Code Push → CI builds image → Updates K8s manifest →
 ArgoCD syncs → Rolling deployment
 ```
 
@@ -90,21 +90,21 @@ ArgoCD syncs → Rolling deployment
 
 ## Live Services
 
-**Application:**  
+**Application:**
 https://game.eks.hamsa-ahmed.co.uk
 
 ![Application Screenshot](docs/eks-game.png)
 
 
-**ArgoCD:**  
-https://argocd.eks.hamsa-ahmed.co.uk  
+**ArgoCD:**
+https://argocd.eks.hamsa-ahmed.co.uk
 Login: `admin` / `kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d`
 
 ![ArgoCD Dashboard](docs/argocd.png)
 
 
-**Grafana:**  
-https://grafana.eks.hamsa-ahmed.co.uk  
+**Grafana:**
+https://grafana.eks.hamsa-ahmed.co.uk
 Login: `admin` / `admin123`
 
 ![Grafana Dashboard](docs/grafana.png)
@@ -114,7 +114,7 @@ Login: `admin` / `admin123`
 
 ## Monitoring
 
-Prometheus collects metrics from cluster, nodes, pods, and ingress.  
+Prometheus collects metrics from cluster, nodes, pods, and ingress.
 Grafana dashboards show:
 - Cluster resource usage
 - Pod health and scaling
@@ -139,7 +139,7 @@ Grafana dashboards show:
 
 ## Scaling
 
-HPA configuration: 2-10 pods, 70% CPU target  
+HPA configuration: 2-10 pods, 70% CPU target
 Automatically scales based on load
 
 ---

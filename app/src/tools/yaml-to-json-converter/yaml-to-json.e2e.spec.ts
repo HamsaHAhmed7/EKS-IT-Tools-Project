@@ -44,7 +44,7 @@ test.describe('Tool - Yaml to json', () => {
       - <<: *default
         name: John
       - { age: 3, <<: *default }
-      
+
       `);
 
     const generatedJson = await page.getByTestId('area-content').innerText();

@@ -8,11 +8,11 @@ CLUSTER_EXISTS=$(aws eks describe-cluster --name eks-game-eks-cluster --region e
 
 if [ "$CLUSTER_EXISTS" = "true" ]; then
     echo "Cluster found. Cleaning up Kubernetes resources..."
-    
+
     # Delete all ingresses first (triggers ExternalDNS cleanup)
     echo "Deleting all ingresses..."
     kubectl delete ingress --all --all-namespaces --ignore-not-found=true 2>/dev/null || true
-    
+
     # Delete LoadBalancer services
     echo "Deleting LoadBalancer services..."
     kubectl delete svc ingress-nginx-controller -n ingress-nginx --ignore-not-found=true 2>/dev/null || true
@@ -20,11 +20,11 @@ if [ "$CLUSTER_EXISTS" = "true" ]; then
         echo "  Deleting service: $name in namespace $ns"
         kubectl delete svc "$name" -n "$ns" --ignore-not-found=true 2>/dev/null || true
     done
-    
+
     # Delete ArgoCD CRDs
     echo "Cleaning up ArgoCD CRDs..."
     kubectl get crd 2>/dev/null | grep argoproj | awk '{print $1}' | xargs kubectl delete crd --ignore-not-found=true 2>/dev/null || true
-    
+
     echo "⏳ Waiting 3 minutes for AWS to cleanup LoadBalancers and ENIs..."
     sleep 180
 else
@@ -43,7 +43,7 @@ if [ "$NLB_COUNT" -gt 0 ]; then
         echo "  Deleting NLB: $lb_arn"
         aws elbv2 delete-load-balancer --region eu-west-2 --load-balancer-arn "$lb_arn" 2>/dev/null || true
     done
-    
+
     echo "⏳ Waiting 2 minutes for NLB deletion..."
     sleep 120
 else
@@ -81,14 +81,14 @@ terraform destroy -auto-approve
 # If destroy failed, aggressive cleanup
 if [ $? -ne 0 ]; then
     echo "⚠️  Destroy failed. Performing aggressive cleanup..."
-    
+
     # Delete any remaining ENIs in VPC
     if [ -n "$VPC_ID" ]; then
         echo "Deleting network interfaces in VPC: $VPC_ID"
         aws ec2 describe-network-interfaces --region eu-west-2 --filters "Name=vpc-id,Values=$VPC_ID" --query 'NetworkInterfaces[*].NetworkInterfaceId' --output text | \
         xargs -n1 -I {} bash -c 'echo "  Deleting ENI: {}"; aws ec2 delete-network-interface --region eu-west-2 --network-interface-id {} 2>/dev/null || true'
     fi
-    
+
     # Double-check for any remaining NLBs
     echo "Double-checking for remaining NLBs..."
     aws elbv2 describe-load-balancers --region eu-west-2 2>/dev/null | \
@@ -99,10 +99,10 @@ if [ $? -ne 0 ]; then
             aws elbv2 delete-load-balancer --region eu-west-2 --load-balancer-arn "$lb_arn" 2>/dev/null || true
         fi
     done
-    
+
     echo "⏳ Waiting 90 seconds before retry..."
     sleep 90
-    
+
     echo "Retrying terraform destroy..."
     terraform destroy -auto-approve
 fi

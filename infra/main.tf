@@ -45,10 +45,3 @@ module "github_oidc" {
   github_repo = var.github_repo
   common_tags = local.common_tags
 }
-
-
-
-
-
-
-
