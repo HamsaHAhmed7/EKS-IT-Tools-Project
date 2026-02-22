@@ -1,183 +1,273 @@
-[![Terraform CI](https://github.com/HamsaHAhmed7/EKS-Game-Project/actions/workflows/terraform-ci.yml/badge.svg)](https://github.com/HamsaHAhmed7/EKS-Game-Project/actions/workflows/terraform-ci.yml)
-[![Docker Build](https://github.com/HamsaHAhmed7/EKS-Game-Project/actions/workflows/docker-deploy.yml/badge.svg)](https://github.com/HamsaHAhmed7/EKS-Game-Project/actions/workflows/docker-deploy.yml)
+<!-- Add live demo GIF/video here -->
 
-# EKS 2048 Game - Production Kubernetes Deployment
+# EKS IT-Tools Platform
 
-Production-grade application deployment on Amazon EKS with full automation, GitOps, and monitoring.
+Cloud-native deployment of IT-Tools on Amazon EKS, demonstrating modern DevOps practices including Infrastructure as Code, GitOps workflows, automated CI/CD, and comprehensive observability.
 
-**Live:** https://game.eks.hamsa-ahmed.co.uk
+**Live Demo:** https://it-tools.eks.hamsa-ahmed.co.uk
 
-
-
----
-
-## Overview
-
-Complete cloud-native deployment demonstrating:
-- Infrastructure as Code with Terraform
-- Automated CI/CD pipelines
-- GitOps with ArgoCD
-- SSL/TLS automation
-- Monitoring and observability
-
-![EKS Production Architecture](./docs/architecture-diagram.png)
+[![CI](https://github.com/HamsaHAhmed7/EKS-IT-Tools-Project/actions/workflows/CI-PR.yaml/badge.svg)](https://github.com/HamsaHAhmed7/EKS-IT-Tools-Project/actions/workflows/CI-PR.yaml)
+[![CD](https://github.com/HamsaHAhmed7/EKS-IT-Tools-Project/actions/workflows/CD-Deploy.yaml/badge.svg)](https://github.com/HamsaHAhmed7/EKS-IT-Tools-Project/actions/workflows/CD-Deploy.yaml)
 
 ---
 
-## Tech Stack
+## Project Overview
 
-**Infrastructure:** AWS EKS, VPC, Route53, ECR
-**IaC:** Terraform with modular design
-**Container:** Docker, NGINX
-**Orchestration:** Kubernetes 1.31
-**GitOps:** ArgoCD
-**Ingress:** NGINX Ingress + AWS Load Balancer Controller
-**SSL:** cert-manager + Let's Encrypt
-**DNS:** ExternalDNS
-**Monitoring:** Prometheus + Grafana
-**Security:** Trivy, Checkov
-**CI/CD:** GitHub Actions
+This project deploys a developer utilities platform on AWS EKS, implementing infrastructure-as-code principles and GitOps methodologies. The deployment includes automated CI/CD pipelines, security scanning, SSL certificate management, and monitoring infrastructure.
 
----
+**Architecture Highlights:**
+- Multi-AZ VPC with public/private subnet separation
+- EKS cluster with managed node groups
+- GitOps-driven deployments via ArgoCD
+- Automated certificate lifecycle management
+- Integrated observability stack
 
-## Quick Start
-
-**1. Configure variables** in `infra/terraform.tfvars`
-
-**2. Deploy infrastructure:**
-```bash
-cd infra
-terraform init
-terraform apply
-```
-
-**3. Configure kubectl:**
-```bash
-aws eks update-kubeconfig --name eks-game-eks-cluster --region eu-west-2
-kubectl apply -f kubernetes/
-```
-
-**4. Update Route53 NS delegation and wait for certificates**
-
-![Terraform CI Pipeline](docs/terraform-ci.png)
-
+![Infrastructure Architecture](./docs/architecture-diagram.png)
 
 ---
 
-## CI/CD Pipelines
+## Technology Stack
 
-**Pipeline 1 - Terraform Validation:**
-- Terraform fmt, init, validate
-- Checkov security scanning
-- Plan generation for review
+**Cloud Infrastructure**
+- Amazon EKS (Kubernetes 1.34)
+- AWS VPC (10.0.0.0/16 CIDR)
+- Amazon Route53
+- Amazon ECR
+- AWS Load Balancers (NLB)
 
-![Terraform CI Pipeline](docs/terraform-ci.png)
+**Infrastructure Management**
+- Terraform (modular design)
+- Remote state management (S3 + DynamoDB)
+- Pod Identity for service accounts
 
-**Pipeline 2 - Docker Deployment:**
-- Build image → Trivy scan → Push to ECR
-- Update manifest → ArgoCD auto-deploys
+**Application Delivery**
+- ArgoCD for GitOps
+- NGINX Ingress Controller
+- AWS Load Balancer Controller
+- cert-manager + Let's Encrypt
+- ExternalDNS
 
-![Docker CI Pipeline](docs/docker-i.png)
+**Observability**
+- Prometheus (metrics collection)
+- Grafana (visualization)
+- Metrics Server (HPA support)
 
+**CI/CD & Security**
+- GitHub Actions (OIDC authentication)
+- Trivy (container scanning)
+- Checkov (IaC validation)
+- Pre-commit hooks
+
+---
+
+## CI/CD Pipeline
+
+**Pull Request Validation**
+- Docker build verification
+- Trivy security scan (reports vulnerabilities)
+- Terraform validation and formatting
+- Checkov infrastructure scan
+- Terraform plan generation
+
+**Deployment Automation**
+- Automated Docker image build and push to ECR
+- Kubernetes manifest updates (commit SHA tagging)
+- ArgoCD sync triggers deployment
+- Rolling updates with configurable pod disruption budgets
+
+![CI Workflow](./docs/terraform-ci.png)
 
 **GitOps Flow:**
 ```
-Code Push → CI builds image → Updates K8s manifest →
-ArgoCD syncs → Rolling deployment
+Code Change → PR Validation → Merge →
+Build & Push → Manifest Update → ArgoCD Sync → Deployment
 ```
+
+---
+
+## Security Approach
+
+**Shift-Left Security**
+
+Early detection of security issues reduces remediation costs and prevents vulnerabilities from reaching production.
+
+Implementation:
+- Pre-commit hooks validate code locally before commits
+- Trivy scans identify container vulnerabilities during CI
+- Checkov validates infrastructure configurations against security benchmarks
+- Automated dependency scanning
+
+**Runtime Security**
+- TLS 1.2+ for all external traffic
+- IAM OIDC for GitHub Actions (no long-lived credentials)
+- Private subnets for worker nodes
+- Pod-level IAM authentication
+- Network policies and security groups
+
+---
+
+## Cost Considerations
+
+**Current Monthly Estimate:** ~$80-100 USD
+
+**Breakdown:**
+- EKS Control Plane: ~$73/month (flat rate)
+- EC2 t3.medium instances (2): ~$30/month
+- NAT Gateway: ~$32/month
+- Load Balancers: ~$16-20/month
+- Data transfer: ~$5/month
+- Route53: <$1/month
+
+**Cost Optimization Opportunities:**
+- Spot instances for non-production workloads
+- Single NAT Gateway (removes multi-AZ redundancy)
+- Fargate for selective workloads
+- Reserved instances for predictable workloads
+- S3 lifecycle policies for logs and backups
+
+**Trade-offs:**
+- Multi-AZ deployment increases costs but improves availability
+- Managed EKS control plane vs self-managed Kubernetes
+- Persistent storage adds cost but required for Prometheus/Grafana data retention
 
 ---
 
 ## Live Services
 
-**Application:**
-https://game.eks.hamsa-ahmed.co.uk
+**Application**
+https://it-tools.eks.hamsa-ahmed.co.uk
+Developer utilities collection (base64, JSON tools, hash generators, formatters)
 
-![Application Screenshot](docs/eks-game.png)
+![Application](./docs/eks-game.png)
 
-
-**ArgoCD:**
+**ArgoCD**
 https://argocd.eks.hamsa-ahmed.co.uk
-Login: `admin` / `kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d`
+GitOps controller managing deployments
+Credentials: `admin` / via kubectl secret retrieval
 
-![ArgoCD Dashboard](docs/argocd.png)
+![ArgoCD](./docs/argocd.png)
 
-
-**Grafana:**
+**Grafana**
 https://grafana.eks.hamsa-ahmed.co.uk
-Login: `admin` / `admin123`
+Monitoring dashboards and metrics visualization
 
-![Grafana Dashboard](docs/grafana.png)
-
-
----
-
-## Monitoring
-
-Prometheus collects metrics from cluster, nodes, pods, and ingress.
-Grafana dashboards show:
-- Cluster resource usage
-- Pod health and scaling
-- NGINX traffic and latency
-- Node metrics
-
-![Prometheus Target Health](docs/prometheus-target.png)
+![Grafana](./docs/grafana.png)
 
 ---
 
-## Security
+## Monitoring Implementation
 
-- Checkov IaC scanning (57 passed checks)
-- Trivy container scanning (0 vulnerabilities)
-- Let's Encrypt SSL certificates
-- IAM Pod Identity (no static credentials)
-- Private subnets for worker nodes
+**Metrics Collection:**
+- Kubernetes API server metrics
+- Node exporter (CPU, memory, disk, network)
+- Pod resource usage and health
+- NGINX ingress traffic metrics
 
-*Note: nginx runs as root in the container for simplicity. Production deployments would use non-root with custom config.*
+**Visualization:**
+- Cluster resource utilization
+- Pod-level metrics
+- HTTP request patterns
+- Node capacity and health
+
+![Prometheus](./docs/prometheus-target.png)
+
+**Note:** Prometheus currently configured without persistent storage. Metrics are lost on pod restart. Production implementations would use persistent volumes or external storage solutions.
 
 ---
 
-## Scaling
+## Deployment Instructions
 
-HPA configuration: 2-10 pods, 70% CPU target
-Automatically scales based on load
+**Prerequisites:**
+- AWS CLI configured
+- Terraform 1.12+
+- kubectl
 
----
-
-## Teardown
+**Deploy Infrastructure:**
 ```bash
 cd infra
-./tear-down.sh
+terraform init
+terraform apply -var-file=terraform.tfvars
 ```
 
----
+Deployment time: ~10-15 minutes
+DNS/SSL propagation: additional 5-10 minutes
 
-## Key Features
+**Configure kubectl:**
+```bash
+aws eks update-kubeconfig --name eks-it-tools-eks-cluster --region eu-west-2
+kubectl get pods -A
+```
 
-- **Full automation:** One command infrastructure deployment
-- **GitOps:** Git as single source of truth
-- **Zero-downtime:** Rolling deployments via ArgoCD
-- **Security scanning:** Automated vulnerability detection
-- **SSL automation:** Certificates managed by cert-manager
-- **Dynamic DNS:** ExternalDNS syncs ingress to Route53
+**Destroy Infrastructure:**
+```bash
+cd infra
+terraform destroy -var-file=terraform.tfvars -auto-approve
+```
 
 ---
 
 ## Project Structure
 ```
-├── app/                 # Application code
+├── app/                    # IT-Tools application source
 ├── infra/
-│   ├── modules/        # Terraform modules
-│   ├── kubernetes/     # K8s manifests
-│   └── values/         # Helm configurations
-└── .github/workflows/  # CI/CD pipelines
+│   ├── modules/           # Terraform modules (VPC, EKS, Helm)
+│   ├── kubernetes/        # Kubernetes manifests
+│   ├── values/            # Helm values files
+│   └── terraform.tfvars   # Infrastructure variables
+├── .github/workflows/     # CI/CD pipeline definitions
+└── .pre-commit-config.yaml
 ```
+
+---
+
+## Technical Capabilities Demonstrated
+
+- Multi-module Terraform architecture
+- EKS cluster provisioning and configuration
+- GitOps deployment patterns
+- Automated CI/CD pipeline implementation
+- Container security scanning integration
+- Infrastructure security validation
+- SSL/TLS automation
+- DNS automation
+- Kubernetes ingress configuration
+- Horizontal pod autoscaling
+- Monitoring and observability setup
+- IAM authentication for Kubernetes workloads
+
+---
+
+## Known Limitations
+
+- Single NAT Gateway (cost optimization, reduces HA)
+- Prometheus without persistent storage
+- Grafana credentials in plaintext (should use Secrets Manager)
+- Default namespace usage (production would use dedicated namespaces)
+- No network policies configured
+- Manual terraform apply required (no automated infrastructure changes)
+
+---
+
+## Future Improvements
+
+- Implement Karpenter for advanced node autoscaling
+- Add persistent storage for Prometheus
+- Implement proper secrets management
+- Configure network policies
+- Add Terraform Cloud for remote operations
+- Implement blue/green deployments
+- Add application-level alerting
 
 ---
 
 ## Author
 
 Hamsa Ahmed
+DevOps Engineer
+
+[GitHub](https://github.com/HamsaHAhmed7)
+
+---
 
 ## License
 
