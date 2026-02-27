@@ -4,7 +4,6 @@
 
 Cloud-native deployment of IT-Tools on Amazon EKS, demonstrating modern DevOps practices including Infrastructure as Code, GitOps workflows, automated CI/CD, and comprehensive observability.
 
-**Live Demo:** https://it-tools.eks.hamsa-ahmed.co.uk
 
 [![CI](https://github.com/HamsaHAhmed7/EKS-IT-Tools-Project/actions/workflows/CI-PR.yaml/badge.svg)](https://github.com/HamsaHAhmed7/EKS-IT-Tools-Project/actions/workflows/CI-PR.yaml)
 [![CD](https://github.com/HamsaHAhmed7/EKS-IT-Tools-Project/actions/workflows/CD-Deploy.yaml/badge.svg)](https://github.com/HamsaHAhmed7/EKS-IT-Tools-Project/actions/workflows/CD-Deploy.yaml)
